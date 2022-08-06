@@ -11,30 +11,31 @@ go run main.go
 *Open a second terminal*
 
 To get the current Expense List :
-'''sh
+
+```sh
 
 curl localhost:9090/ | jq 
 
-'''
+```
 jq: optional JSON Beautifier
 
 
 To update an Expense with a specific ID:
 
-'''sh
+```sh
 
 curl localhost:9090/update/2
 
-'''
+```
 
 
 To add an Expense:
 
-'''sh
+```sh
 
 curl localhost:9090/add -d '{"vendor": vendorName, "value": amountOfMoney}'
 
-'''
+```
 
 ### First Goal 
 
