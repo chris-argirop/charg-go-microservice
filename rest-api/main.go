@@ -8,6 +8,8 @@ import (
 	"os"
 	"os/signal"
 	"time"
+
+	"github.com/gorilla/mux"
 )
 
 func main() {
@@ -15,8 +17,17 @@ func main() {
 
 	eh := handlers.NewExpense(l)
 
-	sm := http.NewServeMux()
-	sm.Handle("/", eh)
+	sm := mux.NewRouter()
+	getRouter := sm.Methods(http.MethodGet).Subrouter()
+	getRouter.HandleFunc("/", eh.GetExpenses)
+
+	putRouter := sm.Methods(http.MethodPut).Subrouter()
+	putRouter.HandleFunc("/update/{id:[0-9]+}", eh.UpdateExpenses)
+	putRouter.Use(eh.MiddlewarevalidateExpense)
+
+	postRouter := sm.Methods(http.MethodPost).Subrouter()
+	postRouter.HandleFunc("/add", eh.AddExpenses)
+	postRouter.Use(eh.MiddlewarevalidateExpense)
 
 	s := &http.Server{
 		Addr:         ":9090",
