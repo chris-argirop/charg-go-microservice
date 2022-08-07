@@ -19,22 +19,6 @@ var Calendar = []*Month{
 		TotalExp: 0,
 	},
 	&Month{
-		Name:     "January",
-		TotalExp: 0,
-	},
-	&Month{
-		Name:     "January",
-		TotalExp: 0,
-	},
-	&Month{
-		Name:     "January",
-		TotalExp: 0,
-	},
-	&Month{
-		Name:     "January",
-		TotalExp: 0,
-	},
-	&Month{
 		Name:     "February",
 		TotalExp: 0,
 	},
