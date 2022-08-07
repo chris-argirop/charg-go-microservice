@@ -17,6 +17,7 @@ type Expense struct {
 	CreatedOn   string  `json:-`
 	UpdatedOn   string  `json:-`
 	DeletedOn   string  `json:-`
+	Month       string  `json:-`
 }
 
 type Expenses []*Expense
@@ -44,6 +45,7 @@ var ExpList = []*Expense{
 		Value:       60.0,
 		CreatedOn:   time.Now().UTC().String(),
 		UpdatedOn:   time.Now().UTC().String(),
+		Month:       time.Now().Month().String(),
 	},
 	&Expense{
 		ID:          2,
@@ -52,6 +54,7 @@ var ExpList = []*Expense{
 		Value:       11.90,
 		CreatedOn:   time.Now().UTC().String(),
 		UpdatedOn:   time.Now().UTC().String(),
+		Month:       time.Now().Month().String(),
 	},
 }
 
@@ -61,6 +64,8 @@ func GetExpenses() Expenses {
 
 func AddExpense(e *Expense) {
 	e.ID = getnextID()
+	e.CreatedOn = time.Now().UTC().String()
+	e.Month = time.Now().UTC().Month().String()
 	ExpList = append(ExpList, e)
 }
 
@@ -71,6 +76,8 @@ func UpdateExpense(id int, e *Expense) error {
 	}
 
 	e.ID = id
+	e.UpdatedOn = time.Now().UTC().String()
+	e.CreatedOn = ExpList[pos].CreatedOn
 	ExpList[pos] = e
 	return nil
 }

@@ -16,6 +16,7 @@ func main() {
 	l := log.New(os.Stdout, "charg-api", log.LstdFlags)
 
 	eh := handlers.NewExpense(l)
+	ch := handlers.NewCalendar(l)
 
 	sm := mux.NewRouter()
 	getRouter := sm.Methods(http.MethodGet).Subrouter()
@@ -28,6 +29,9 @@ func main() {
 	postRouter := sm.Methods(http.MethodPost).Subrouter()
 	postRouter.HandleFunc("/add", eh.AddExpenses)
 	postRouter.Use(eh.MiddlewarevalidateExpense)
+
+	calRouter := sm.Methods(http.MethodGet).Subrouter()
+	calRouter.HandleFunc("/calendar", ch.GetCalendar)
 
 	s := &http.Server{
 		Addr:         ":9090",
