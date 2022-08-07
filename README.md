@@ -4,6 +4,17 @@ Expense Calculator/Organizer Microservice written in Go-lang
 
 ## How-to
 
+### NEW: Dockerfile
+
+Run 
+
+```sh
+docker build -t <image-tag> .
+docker run -p 9090:9090 -t <image-tag>
+```
+Then run your http requests
+
+
 ```sh
 cd rest-api/
 go run main.go
