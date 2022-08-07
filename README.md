@@ -14,6 +14,7 @@ docker run -p 9090:9090 -t <image-tag>
 ```
 Then run your http requests
 
+### OR
 
 ```sh
 cd rest-api/
