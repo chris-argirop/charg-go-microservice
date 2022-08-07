@@ -1,13 +1,13 @@
 package handlers
 
 import (
-	"charg-go-microservice/rest-api/data"
 	"context"
 	"fmt"
 	"log"
 	"net/http"
 	"strconv"
 
+	"github.com/chris-argirop/charg-go-microsrvice/rest-api/data"
 	"github.com/gorilla/mux"
 )
 

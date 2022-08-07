@@ -1,9 +1,10 @@
 package handlers
 
 import (
-	"charg-go-microservice/rest-api/data"
 	"log"
 	"net/http"
+
+	"github.com/chris-argirop/charg-go-microsrvice/rest-api/data"
 )
 
 type Calendar struct {

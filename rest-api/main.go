@@ -1,7 +1,6 @@
 package main
 
 import (
-	"charg-go-microservice/rest-api/handlers"
 	"context"
 	"log"
 	"net/http"
@@ -9,6 +8,7 @@ import (
 	"os/signal"
 	"time"
 
+	"github.com/chris-argirop/charg-go-microsrvice/rest-api/handlers"
 	"github.com/gorilla/mux"
 )
 
