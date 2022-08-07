@@ -38,6 +38,15 @@ curl localhost:9090/add -d '{"vendor": vendorName, "value": amountOfMoney}'
 
 ```
 
+To retrieve a Calendar which contains the total amount spent + all the expenses of each month
+
+```sh
+
+curl localhost:9090/calendar 
+
+```
+
+
 ### First Goal 
 
 A Basic REST API that Gets, Puts, Posts entries for an Expense list
