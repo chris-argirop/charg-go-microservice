@@ -4,9 +4,10 @@ Expense Calculator/Organizer Microservice written in Go-lang
 
 ## How-to
 
+```sh
 cd rest-api/
 go run main.go
-
+```
 
 *Open a second terminal*
 
