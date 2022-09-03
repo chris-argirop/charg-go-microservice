@@ -2,6 +2,8 @@ package main
 
 import (
 	"context"
+	"database/sql"
+	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -9,6 +11,7 @@ import (
 	"time"
 
 	"github.com/chris-argirop/charg-go-microsrvice/rest-api/handlers"
+	_ "github.com/go-sql-driver/mysql"
 	"github.com/gorilla/mux"
 )
 
@@ -40,6 +43,20 @@ func main() {
 		ReadTimeout:  1 * time.Second,
 		WriteTimeout: 1 * time.Second,
 	}
+
+	db, err := sql.Open("mysql", "root:Admin123@tcp(localhost:3307)/testdb")
+	if err != nil {
+		fmt.Println("Error validating sql.Open arguments")
+		panic(err.Error())
+	}
+	defer db.Close()
+
+	err = db.Ping()
+	if err != nil {
+		fmt.Println("error verifying connection with db.Ping")
+		panic(err.Error())
+	}
+	fmt.Println("Successfull Connection to Database!")
 
 	go func() {
 		err := s.ListenAndServe()
