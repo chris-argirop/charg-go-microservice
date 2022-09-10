@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"database/sql"
 	"fmt"
 	"log"
 	"net/http"
@@ -10,6 +9,7 @@ import (
 	"os/signal"
 	"time"
 
+	"github.com/chris-argirop/charg-go-microsrvice/rest-api/db"
 	"github.com/chris-argirop/charg-go-microsrvice/rest-api/handlers"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/gorilla/mux"
@@ -17,6 +17,13 @@ import (
 
 func main() {
 	l := log.New(os.Stdout, "charg-api", log.LstdFlags)
+
+	db, err := db.NewDatabase("mysql", "root:Admin123@tcp(localhost:3307)/testdb")
+	defer db.CloseConnection()
+	if err != nil {
+		l.Fatal(err)
+	}
+	fmt.Println("Successfull Connection to Database!")
 
 	eh := handlers.NewExpense(l)
 	ch := handlers.NewCalendar(l)
@@ -43,21 +50,8 @@ func main() {
 		ReadTimeout:  1 * time.Second,
 		WriteTimeout: 1 * time.Second,
 	}
-
-	db, err := sql.Open("mysql", "root:Admin123@tcp(localhost:3307)/testdb")
-	if err != nil {
-		fmt.Println("Error validating sql.Open arguments")
-		panic(err.Error())
-	}
-	defer db.Close()
-
-	err = db.Ping()
-	if err != nil {
-		fmt.Println("error verifying connection with db.Ping")
-		panic(err.Error())
-	}
-	fmt.Println("Successfull Connection to Database!")
-
+	// Testing MySQL Insert funcitonality
+	db.AddToHistory("OYSHO", 30.20)
 	go func() {
 		err := s.ListenAndServe()
 		if err != nil {
