@@ -25,7 +25,7 @@ func main() {
 	}
 	fmt.Println("Successfull Connection to Database!")
 
-	eh := handlers.NewExpense(l)
+	eh := handlers.NewExpense(l, db)
 	ch := handlers.NewCalendar(l)
 
 	sm := mux.NewRouter()
@@ -51,7 +51,7 @@ func main() {
 		WriteTimeout: 1 * time.Second,
 	}
 	// Testing MySQL Insert funcitonality
-	db.AddToHistory("OYSHO", 30.20)
+	db.AddExpense("OYSHO", 30.20)
 	go func() {
 		err := s.ListenAndServe()
 		if err != nil {

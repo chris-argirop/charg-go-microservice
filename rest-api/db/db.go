@@ -33,7 +33,7 @@ func (mydb Database) CloseConnection() {
 	}
 }
 
-func (mydb Database) AddToHistory(vendor string, sum float32) error {
+func (mydb Database) AddExpense(vendor string, sum float32) error {
 	queryString, args, err := sq.Insert("expenses").Columns("vendor", "val", "createdOn").
 		Values(vendor, sum, time.Now()).ToSql()
 

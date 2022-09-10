@@ -8,15 +8,17 @@ import (
 	"strconv"
 
 	"github.com/chris-argirop/charg-go-microsrvice/rest-api/data"
+	"github.com/chris-argirop/charg-go-microsrvice/rest-api/db"
 	"github.com/gorilla/mux"
 )
 
 type Expenses struct {
-	l *log.Logger
+	l  *log.Logger
+	db *db.Database
 }
 
-func NewExpense(l *log.Logger) *Expenses {
-	return &Expenses{l}
+func NewExpense(l *log.Logger, db *db.Database) *Expenses {
+	return &Expenses{l, db}
 }
 
 func (ex *Expenses) GetExpenses(rw http.ResponseWriter, r *http.Request) {
@@ -33,6 +35,7 @@ func (ex *Expenses) AddExpenses(rw http.ResponseWriter, r *http.Request) {
 	ex.l.Println("Handle POST Expense")
 
 	exp := r.Context().Value(KeyExpense{}).(data.Expense)
+	ex.db.AddExpense(exp.Vendor, exp.Value)
 	data.AddExpense(&exp)
 }
 
