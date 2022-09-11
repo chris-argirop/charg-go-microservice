@@ -9,6 +9,7 @@ import (
 
 	"github.com/chris-argirop/charg-go-microsrvice/rest-api/data"
 	"github.com/chris-argirop/charg-go-microsrvice/rest-api/db"
+	_ "github.com/go-sql-driver/mysql"
 	"github.com/gorilla/mux"
 )
 
@@ -23,12 +24,10 @@ func NewExpense(l *log.Logger, db *db.Database) *Expenses {
 
 func (ex *Expenses) GetExpenses(rw http.ResponseWriter, r *http.Request) {
 	ex.l.Println("Handle GET Expense")
-	le := data.GetExpenses()
-	err := le.ToJSON(rw)
+	err := ex.db.GetExpenses(rw)
 	if err != nil {
-		http.Error(rw, "Unable to unmarshal JSON", http.StatusInternalServerError)
+		http.Error(rw, "Could not retrieve database entries", http.StatusInternalServerError)
 	}
-
 }
 
 func (ex *Expenses) AddExpenses(rw http.ResponseWriter, r *http.Request) {
