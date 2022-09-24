@@ -8,17 +8,36 @@ content-type: application/json
 
 ###
 
-GET http://localhost:9090/ HTTP/1.1
+GET http://localhost:9090/get HTTP/1.1
 
 ###
 
-PUT http://localhost:9090/update/1 HTTP/1.1
+GET http://localhost:9090/get/8 HTTP/1.1
+
+### 
+
+PUT http://localhost:9090/update/8 HTTP/1.1
 content-type: application/json
 
 {
-    "vendor": "store",
-    "value": 25
+    "vendor": "MyMarket",
+    "description": "Super Market",
+    "value": 75
 }
 
 ###
 GET http://localhost:9090/calendar HTTP/1.1
+
+
+###
+POST http://localhost:9090/add HTTP/1.1
+content-type: application/json
+
+{
+    "vendor": "PAF",
+     "descr": "dumb shit", 
+     "value": 12.3
+}
+
+#TODO: GET Specific expense by Vendor
+# 

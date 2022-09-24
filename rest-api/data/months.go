@@ -11,6 +11,8 @@ type Month struct {
 	AllExpenses []Expense
 }
 
+//TODO: REFACTORING IS IN ORDER AND STARTING OVER
+
 type Months []*Month
 
 var Calendar = []*Month{
@@ -64,19 +66,7 @@ var Calendar = []*Month{
 	},
 }
 
-func CalculateMonthlyExpenses() {
-	for _, exp := range ExpList {
-		for _, mnth := range Calendar {
-			if exp.Month == mnth.Name {
-				mnth.TotalExp += exp.Value
-				mnth.AllExpenses = append(mnth.AllExpenses, *exp)
-			}
-		}
-	}
-}
-
 func GetCalendar() Months {
-	CalculateMonthlyExpenses()
 	return Calendar
 }
 

@@ -30,28 +30,45 @@ func (ex *Expenses) GetExpenses(rw http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (ex *Expenses) AddExpenses(rw http.ResponseWriter, r *http.Request) {
-	ex.l.Println("Handle POST Expense")
-
-	exp := r.Context().Value(KeyExpense{}).(data.Expense)
-	ex.db.AddExpense(exp.Vendor, exp.Value)
-	data.AddExpense(&exp)
-}
-
-type KeyExpense struct{}
-
-func (e *Expenses) UpdateExpenses(rw http.ResponseWriter, r *http.Request) {
+func (ex *Expenses) GetExpense(rw http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id, err := strconv.Atoi(vars["id"])
 
 	if err != nil {
 		http.Error(rw, "Unable to conver id", http.StatusBadRequest)
 	}
-	e.l.Println("Handle PUT Expense", id)
+	ex.l.Println("Handle GET Specific Expense ", id)
+	err = ex.db.GetExpense(rw, id)
+	if err != nil {
+		http.Error(rw, "Could not retrieve database entry", http.StatusInternalServerError)
+	}
+}
+
+func (ex *Expenses) AddExpenses(rw http.ResponseWriter, r *http.Request) {
+	ex.l.Println("Handle POST Expense")
+
+	exp := r.Context().Value(KeyExpense{}).(data.Expense)
+	err := ex.db.AddExpense(exp.Vendor, exp.Value)
+	if err != nil {
+		http.Error(rw, "Could not add database entry", http.StatusInternalServerError)
+	}
+}
+
+type KeyExpense struct{}
+
+func (ex *Expenses) UpdateExpenses(rw http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	id, err := strconv.Atoi(vars["id"])
+
+	if err != nil {
+		http.Error(rw, "Unable to conver id", http.StatusBadRequest)
+	}
+	ex.l.Println("Handle PUT Expense", id)
 
 	exp := r.Context().Value(KeyExpense{}).(data.Expense)
 
-	err = data.UpdateExpense(id, &exp)
+	//err = data.UpdateExpense(id, &exp)
+	err = ex.db.UpdateExpense(id, exp.Vendor, exp.Description, exp.Value)
 	if err != nil {
 		http.Error(rw, "Expense not found", http.StatusNotFound)
 		return

@@ -3,6 +3,7 @@ package db
 import (
 	"database/sql"
 	"encoding/json"
+	"fmt"
 	"io"
 	"log"
 	"time"
@@ -52,23 +53,6 @@ func (r Row) ToJSON(w io.Writer) error {
 	return e.Encode(r)
 }
 
-func (mydb Database) AddExpense(vendor string, sum float32) error {
-	id := mydb.getnextID()
-	queryString, args, err := sq.Insert("expenses").Columns("id", "vendor", "descr", "val", "createdOn").
-		Values(id, vendor, "N/A", sum, time.Now()).ToSql()
-
-	if err != nil {
-		return err
-	}
-
-	_, err = mydb.db.Exec(queryString, args...)
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
 func (mydb Database) GetExpenses(w io.Writer) error {
 	res, err := mydb.db.Query("SELECT * FROM expenses")
 	if err != nil {
@@ -98,6 +82,76 @@ func (mydb Database) GetExpenses(w io.Writer) error {
 	}
 
 	return nil
+}
+
+func (mydb Database) GetExpense(w io.Writer, id int) error {
+	res, err := mydb.db.Query(fmt.Sprintf("SELECT * FROM expenses WHERE ID = %d", id))
+	if err != nil {
+		log.Fatalf("DB Get Single Expense Failure: %v", err)
+	}
+
+	defer res.Close()
+	e := json.NewEncoder(w)
+	for res.Next() {
+		var (
+			id     int
+			vendor string
+			descr  string
+			value  float32
+			date   string
+		)
+
+		err = res.Scan(&id, &vendor, &descr, &value, &date)
+		if err != nil {
+			log.Fatalf("DB Single Row parse Failure: %v", err)
+		}
+		err = e.Encode(NewRow(id, vendor, descr, value, date))
+		if err != nil {
+			log.Fatalf("JSON Encoding failed")
+		}
+	}
+
+	return nil
+}
+
+func (mydb Database) AddExpense(vendor string, sum float32) error {
+	id := mydb.getnextID()
+	queryString, args, err := sq.Insert("expenses").Columns("id", "vendor", "descr", "val", "createdOn").
+		Values(id, vendor, "N/A", sum, time.Now()).ToSql()
+
+	if err != nil {
+		return err
+	}
+
+	_, err = mydb.db.Exec(queryString, args...)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (mydb Database) UpdateExpense(id int, vendor string, description string, sum float32) error {
+
+	queryString, args, err := sq.Update("expenses").
+		Set("vendor", vendor).
+		Set("descr", description).
+		Set("val", sum).
+		Set("createdOn", time.Now()).
+		Where(sq.Eq{"id": id}).
+		ToSql()
+
+	if err != nil {
+		return err
+	}
+
+	_, err = mydb.db.Exec(queryString, args...)
+	if err != nil {
+		return err
+	}
+
+	return nil
+
 }
 
 func (mydb *Database) getnextID() int {
