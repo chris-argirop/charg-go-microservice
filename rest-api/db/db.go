@@ -25,6 +25,8 @@ type Row struct {
 }
 
 func NewDatabase(driverName, dataSourceName string) (*Database, error) {
+	// Wait for DB to spin up
+	time.Sleep(30 * time.Second)
 	db, err := sql.Open(driverName, dataSourceName)
 	if err != nil {
 		log.Fatalf("DB Connection Failure: %v", err)
@@ -114,6 +116,36 @@ func (mydb Database) GetExpense(w io.Writer, id int) error {
 	return nil
 }
 
+func (mydb Database) GetExpensesByVendor(w io.Writer, vendor string) error {
+	res, err := mydb.db.Query(fmt.Sprintf("SELECT * FROM expenses WHERE vendor = \"%s\"", vendor))
+	if err != nil {
+		log.Fatalf("DB Get Expenses by Vendor Failure: %v", err)
+	}
+
+	defer res.Close()
+	e := json.NewEncoder(w)
+	for res.Next() {
+		var (
+			id     int
+			vendor string
+			descr  string
+			value  float32
+			date   string
+		)
+
+		err = res.Scan(&id, &vendor, &descr, &value, &date)
+		if err != nil {
+			log.Fatalf("DB Single Row parse Failure: %v", err)
+		}
+		err = e.Encode(NewRow(id, vendor, descr, value, date))
+		if err != nil {
+			log.Fatalf("JSON Encoding failed")
+		}
+	}
+
+	return nil
+}
+
 func (mydb Database) AddExpense(vendor string, sum float32) error {
 	id := mydb.getnextID()
 	queryString, args, err := sq.Insert("expenses").Columns("id", "vendor", "descr", "val", "createdOn").
@@ -152,6 +184,35 @@ func (mydb Database) UpdateExpense(id int, vendor string, description string, su
 
 	return nil
 
+}
+
+func (mydb Database) DeleteExpense(id int) error {
+	queryString, args, err := sq.Delete("expenses").Where("id = ?", id).ToSql()
+
+	if err != nil {
+		return err
+	}
+	_, err = mydb.db.Exec(queryString, args...)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (mydb Database) ClearTable() error {
+	queryString, args, err := sq.Delete("expenses").ToSql()
+
+	if err != nil {
+		return err
+	}
+
+	_, err = mydb.db.Exec(queryString, args...)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (mydb *Database) getnextID() int {

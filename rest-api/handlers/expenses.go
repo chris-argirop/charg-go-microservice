@@ -35,12 +35,26 @@ func (ex *Expenses) GetExpense(rw http.ResponseWriter, r *http.Request) {
 	id, err := strconv.Atoi(vars["id"])
 
 	if err != nil {
-		http.Error(rw, "Unable to conver id", http.StatusBadRequest)
+		http.Error(rw, "Unable to convert id", http.StatusBadRequest)
 	}
 	ex.l.Println("Handle GET Specific Expense ", id)
 	err = ex.db.GetExpense(rw, id)
 	if err != nil {
 		http.Error(rw, "Could not retrieve database entry", http.StatusInternalServerError)
+	}
+}
+
+func (ex *Expenses) GetExpensesByVendor(rw http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	vendor, exists := vars["vendor"]
+
+	if !exists {
+		http.Error(rw, "Unable to read vendor", http.StatusBadRequest)
+	}
+	ex.l.Println("Handle GET Expenses By", vendor)
+	err := ex.db.GetExpensesByVendor(rw, vendor)
+	if err != nil {
+		http.Error(rw, "Could not retrieve database entries", http.StatusInternalServerError)
 	}
 }
 
@@ -80,13 +94,37 @@ func (ex *Expenses) UpdateExpenses(rw http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (e *Expenses) MiddlewarevalidateExpense(next http.Handler) http.Handler {
+func (ex *Expenses) DeleteExpense(rw http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	id, err := strconv.Atoi(vars["id"])
+
+	if err != nil {
+		http.Error(rw, "Unable to conver id", http.StatusBadRequest)
+	}
+	ex.l.Println("Handle PUT Delete Specific Expense ", id)
+	err = ex.db.DeleteExpense(id)
+	if err != nil {
+		http.Error(rw, "Could not remove database entry", http.StatusInternalServerError)
+	}
+
+}
+
+func (ex *Expenses) ClearTable(rw http.ResponseWriter, r *http.Request) {
+	ex.l.Println("Handle PUT Clear Table ")
+	err := ex.db.ClearTable()
+
+	if err != nil {
+		http.Error(rw, "Could not clear table", http.StatusInternalServerError)
+	}
+}
+
+func (ex *Expenses) MiddlewarevalidateExpense(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(rw http.ResponseWriter, r *http.Request) {
 		exp := data.Expense{}
 
 		err := exp.FromJSON(r.Body)
 		if err != nil {
-			e.l.Println("[ERROR] deserializing expense", err)
+			ex.l.Println("[ERROR] deserializing expense", err)
 			http.Error(rw, "Error reading expense", http.StatusBadRequest)
 			return
 		}
@@ -94,7 +132,7 @@ func (e *Expenses) MiddlewarevalidateExpense(next http.Handler) http.Handler {
 		// validte the product
 		err = exp.Validate()
 		if err != nil {
-			e.l.Println("[ERROR] validating expense", err)
+			ex.l.Println("[ERROR] validating expense", err)
 			http.Error(
 				rw,
 				fmt.Sprintf("Error validating expense: %s", err),

@@ -10,7 +10,7 @@ RUN go mod download
 COPY /rest-api/. ./rest-api
 
 WORKDIR /app/rest-api
-# Run the Go build and output binary under hello_go_http
+# Run the Go build
 RUN go build -o /rest-api
 # Make sure to expose the port the HTTP server is using
 EXPOSE 9090

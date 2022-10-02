@@ -23,7 +23,7 @@ func (ex *Expense) FromJSON(w io.Reader) error {
 	return e.Decode(ex)
 }
 
-func (e *Expense) Validate() error {
+func (ex *Expense) Validate() error {
 	validate := validator.New()
-	return validate.Struct(e)
+	return validate.Struct(ex)
 }

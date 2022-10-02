@@ -11,3 +11,18 @@ services:
       - ./rest-api/testdb:/docker-entrypoint-initdb.d
     ports:
       - "3307:3306"
+
+  charg-exp-mgr:
+    build: .
+    environment:
+      DB_DRIVER: "mysql"
+      DS_NAME: "root:Admin123@tcp(db:3306)/testdb"
+      MYSQL_HOST: "db"
+      MYSQL_PASSWORD: "Admin123"
+      MYSQL_DB: "testdb"
+      MYSQL_USER: "root"
+      MYSQL_PORT: "3306"
+    depends_on:
+      - db
+    ports:
+      - "9090:9090"

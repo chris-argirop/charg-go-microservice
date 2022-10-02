@@ -18,7 +18,10 @@ import (
 func main() {
 	l := log.New(os.Stdout, "charg-api", log.LstdFlags)
 
-	db, err := db.NewDatabase("mysql", "root:Admin123@tcp(localhost:3307)/testdb")
+	dbaseDriver := os.Getenv("DB_DRIVER")
+	dsourceName := os.Getenv("DS_NAME")
+
+	db, err := db.NewDatabase(dbaseDriver, dsourceName)
 	defer db.CloseConnection()
 	if err != nil {
 		l.Fatal(err)
@@ -26,14 +29,16 @@ func main() {
 	fmt.Println("Successfull Connection to Database!")
 
 	eh := handlers.NewExpense(l, db)
-	ch := handlers.NewCalendar(l)
 
 	sm := mux.NewRouter()
 	getRouter := sm.Methods(http.MethodGet).Subrouter()
 	getRouter.HandleFunc("/get", eh.GetExpenses)
+	getRouter.HandleFunc("/get/{id:[0-9]+}", eh.GetExpense)
+	getRouter.HandleFunc("/delete/{id:[0-9]+}", eh.DeleteExpense)
+	getRouter.HandleFunc("/clearall", eh.ClearTable)
 
-	getSpecificRouter := sm.Methods(http.MethodGet).Subrouter()
-	getSpecificRouter.HandleFunc("/get/{id:[0-9]+}", eh.GetExpense)
+	// THIS NEEDS WORK REGEX DOESN'T WORK
+	getRouter.HandleFunc("/get/{vendor:(?s).*}", eh.GetExpensesByVendor)
 
 	putRouter := sm.Methods(http.MethodPut).Subrouter()
 	putRouter.HandleFunc("/update/{id:[0-9]+}", eh.UpdateExpenses)
@@ -42,9 +47,6 @@ func main() {
 	postRouter := sm.Methods(http.MethodPost).Subrouter()
 	postRouter.HandleFunc("/add", eh.AddExpenses)
 	postRouter.Use(eh.MiddlewarevalidateExpense)
-
-	calRouter := sm.Methods(http.MethodGet).Subrouter()
-	calRouter.HandleFunc("/calendar", ch.GetCalendar)
 
 	s := &http.Server{
 		Addr:         ":9090",
