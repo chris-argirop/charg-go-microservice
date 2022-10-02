@@ -55,14 +55,6 @@ func main() {
 		ReadTimeout:  1 * time.Second,
 		WriteTimeout: 1 * time.Second,
 	}
-	// Testing MySQL Insert funcitonality
-	db.AddExpense("OYSHO", 30.20)
-	go func() {
-		err := s.ListenAndServe()
-		if err != nil {
-			l.Fatal(err)
-		}
-	}()
 
 	sigChan := make(chan os.Signal)
 	signal.Notify(sigChan, os.Interrupt)
