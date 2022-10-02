@@ -1,77 +1,51 @@
 # charg-go-microservice
-Expense Calculator/Organizer Microservice written in Go-lang
+Expense Calculator/Organizer RESTful JSON API Microservice written in Go-lang.
+
+The purpose of the project is to practice building a RESTful API in Go, as well as Docker/Docker Compose and Microservices.
 
 
 ## How-to
 
-### NEW: Dockerfile
+### Everything is setup on your Docker Server
 
 Run 
 
 ```sh
-docker build -t <image-tag> .
-docker run -p 9090:9090 -t <image-tag>
+docker compose up --build
 ```
+
 Then run your http requests
+Refer to [rest-api/client.http](rest-api/client.http)  file for all the functionality examples
 
-### OR
+__NOTE__ : Feel free to choose your own MySQL Parameters in [docker-compose.yaml](docker-compose.yaml) file.
+### Expense Manager Functionality
 
-```sh
-cd rest-api/
-go run main.go
-```
+1. Get All DB Entries ( ```/get``` )
+2. Get Specific DB Entry by id ( ```/get/$ID``` )
+3. Get All DB Entries that match the expense vendor ( ```/get/$VENDOR``` )
+4. Add a new expense to the DB ( ```/add```  + json data )
+5. Update existing expense in the DB by id ( ```/update/$ID``` + json data )
+6. Delete a DB Entry by id ( ```/delete/$ID``` )
+7. Clear the whole expenses table ( ```/clearall``` )
 
-*Open a second terminal*
-
-To get the current Expense List :
-
-```sh
-
-curl localhost:9090/ | jq 
-
-```
-jq: optional JSON Beautifier
-
-
-To update an Expense with a specific ID:
+### Clean-up
 
 ```sh
-
-curl localhost:9090/update/2
-
+docker compose down
 ```
 
+###  Tech Stack
 
-To add an Expense:
+- Golang
+- MySQL
+- Gorilla Mux for request router
+- Masterminds/squirrel package for MySQL cleaner MySQL queries
+- Docker 
+- Docker Compose
+- REST API
+- Unit Testing
 
-```sh
-
-curl localhost:9090/add -d '{"vendor": vendorName, "value": amountOfMoney}'
-
-```
-
-To retrieve a Calendar which contains the total amount spent + all the expenses of each month
-
-```sh
-
-curl localhost:9090/calendar 
-
-```
-
-
-### First Goal 
-
-A Basic REST API that Gets, Puts, Posts entries for an Expense list
-Maybe have some sort of data processing to get per month avg expenses + top expenses
-
-### Second Goal
-
-Use a DB
-
-### Third Goal 
-
-Make it into a microservice (Docker/Kubernetes imlpementation)
-
-### Fourth Goal
-
+### Future Work
 Refactor with GRPC
+
+

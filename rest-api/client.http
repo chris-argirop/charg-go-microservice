@@ -1,3 +1,4 @@
+### 
 GET http://localhost:9090/get HTTP/1.1
 
 ###
@@ -20,11 +21,11 @@ content-type: application/json
 
 ###
 
-PUT http://localhost:9090/update/3 HTTP/1.1
+PUT http://localhost:9090/update/2 HTTP/1.1
 content-type: application/json
 
 {
-    "vendor": "MyMarket",
+    "vendor": "OYSHO",
     "description": "Super Market",
     "value": 75
 }
