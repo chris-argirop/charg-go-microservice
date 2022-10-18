@@ -60,6 +60,7 @@ docker compose down
 - Docker Compose
 - REST API
 - Unit Testing
+- Prometheus & Grafana Monitoring
 
 ### Future Work
 Refactor with GRPC
