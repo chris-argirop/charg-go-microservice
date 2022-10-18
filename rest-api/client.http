@@ -1,17 +1,17 @@
 ### 
-GET http://localhost:9090/get HTTP/1.1
+GET http://localhost:9100/api/get HTTP/1.1
 
 ###
 
-GET http://localhost:9090/get/0 HTTP/1.1
+GET http://localhost:9100/api/get/0 HTTP/1.1
 
 ### 
 
-GET http://localhost:9090/get/OYSHO HTTP/1.1
+GET http://localhost:9100/api/get/OYSHO HTTP/1.1
 
 
 ###
-POST http://localhost:9090/add HTTP/1.1
+POST http://localhost:9100/api/add HTTP/1.1
 content-type: application/json
 
 {
@@ -21,7 +21,7 @@ content-type: application/json
 
 ###
 
-PUT http://localhost:9090/update/2 HTTP/1.1
+PUT http://localhost:9100/api/update/2 HTTP/1.1
 content-type: application/json
 
 {
@@ -32,10 +32,10 @@ content-type: application/json
 
 ###
 
-GET http://localhost:9090/delete/2 HTTP/1.1
+GET http://localhost:9100/api/delete/2 HTTP/1.1
 
 ###
 
-GET http://localhost:9090/clearall HTTP/1.1
+GET http://localhost:9100/api/clearall HTTP/1.1
 
 ###

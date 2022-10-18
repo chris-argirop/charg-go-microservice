@@ -13,7 +13,30 @@ import (
 	"github.com/chris-argirop/charg-go-microsrvice/rest-api/handlers"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/gorilla/mux"
+	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
+
+var totalRequest = prometheus.NewCounterVec(
+	prometheus.CounterOpts{
+		Name: "http_requests_total",
+		Help: "Number of http requests",
+	},
+	[]string{"path"},
+)
+
+func prometheusMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+
+		next.ServeHTTP(w, r)
+
+		totalRequest.With(prometheus.Labels{"path": "/api/"}).Inc()
+	})
+}
+
+func init() {
+	prometheus.Register(totalRequest)
+}
 
 func main() {
 	l := log.New(os.Stdout, "charg-api", log.LstdFlags)
@@ -32,22 +55,26 @@ func main() {
 
 	sm := mux.NewRouter()
 	getRouter := sm.Methods(http.MethodGet).Subrouter()
-	getRouter.HandleFunc("/get", eh.GetExpenses)
-	getRouter.HandleFunc("/get/{id:[0-9]+}", eh.GetExpense)
-	getRouter.HandleFunc("/delete/{id:[0-9]+}", eh.DeleteExpense)
-	getRouter.HandleFunc("/clearall", eh.ClearTable)
-	getRouter.HandleFunc("/get/{vendor:(?s).*}", eh.GetExpensesByVendor)
+	getRouter.HandleFunc("/api/get", eh.GetExpenses)
+	getRouter.HandleFunc("/api/get/{id:[0-9]+}", eh.GetExpense)
+	getRouter.HandleFunc("/api/delete/{id:[0-9]+}", eh.DeleteExpense)
+	getRouter.HandleFunc("/api/clearall", eh.ClearTable)
+	getRouter.HandleFunc("/api/get/{vendor:(?s).*}", eh.GetExpensesByVendor)
+
+	sm.Use(prometheusMiddleware)
+
+	sm.Path("/metrics").Handler(promhttp.Handler())
 
 	putRouter := sm.Methods(http.MethodPut).Subrouter()
-	putRouter.HandleFunc("/update/{id:[0-9]+}", eh.UpdateExpenses)
+	putRouter.HandleFunc("/api/update/{id:[0-9]+}", eh.UpdateExpenses)
 	putRouter.Use(eh.MiddlewarevalidateExpense)
 
 	postRouter := sm.Methods(http.MethodPost).Subrouter()
-	postRouter.HandleFunc("/add", eh.AddExpenses)
+	postRouter.HandleFunc("/api/add", eh.AddExpenses)
 	postRouter.Use(eh.MiddlewarevalidateExpense)
 
 	s := &http.Server{
-		Addr:         ":9090",
+		Addr:         ":9100",
 		Handler:      sm,
 		IdleTimeout:  120 * time.Second,
 		ReadTimeout:  5 * time.Second,
@@ -55,7 +82,7 @@ func main() {
 	}
 	// start the server
 	go func() {
-		l.Println("Starting server on port 9090")
+		l.Println("Starting server on port 9100")
 
 		err := s.ListenAndServe()
 		if err != nil {

@@ -28,6 +28,22 @@ __NOTE__ : Feel free to choose your own MySQL Parameters in [docker-compose.yaml
 6. Delete a DB Entry by id ( ```/delete/$ID``` )
 7. Clear the whole expenses table ( ```/clearall``` )
 
+
+### Prometheus and Grafana Monitoring 
+
+After the services are Up and Running, enter : 
+```sh
+localhost:3000
+```
+
+Credentials are: admin/admin (feel free to change the password or skip)
+
+Go to *Configuration* -> DataSources to configure the Prometheus Datasource : Enter http://prometheus:9090 as the URL -> *Save and Test *
+
+Now you can add a new dashboard and look for our metric *http_requests_total* to add to a panel. 
+
+![Grafana Dashboard Screenshot](images/grafana_screenshot.PNG)
+
 ### Clean-up
 
 ```sh
