@@ -10,6 +10,8 @@ import (
 
 type KeyExpense struct{}
 
+// Update a specific table entry, based on the id provided in the POST REQ path with information retrieved
+// from the data field of the Request in JSON format
 func (ex *Expenses) UpdateExpenses(rw http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id, err := strconv.Atoi(vars["id"])

@@ -6,6 +6,7 @@ import (
 	"github.com/chris-argirop/charg-go-microsrvice/rest-api/data"
 )
 
+// Add a new expense to the DB, take input from the data input in JSON format provided in the POST REQ
 func (ex *Expenses) AddExpenses(rw http.ResponseWriter, r *http.Request) {
 	ex.l.Println("Handle POST Expense")
 

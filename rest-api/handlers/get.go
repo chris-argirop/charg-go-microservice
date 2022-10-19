@@ -7,6 +7,7 @@ import (
 	"github.com/gorilla/mux"
 )
 
+// Writes to the ResponseWriter all the expenses from the DB
 func (ex *Expenses) GetExpenses(rw http.ResponseWriter, r *http.Request) {
 	ex.l.Println("Handle GET Expense")
 	err := ex.db.GetExpenses(rw)
@@ -15,6 +16,7 @@ func (ex *Expenses) GetExpenses(rw http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// Writes to the ResponseWriter the Expense that matches the id provided in the GET REQ Path
 func (ex *Expenses) GetExpense(rw http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id, err := strconv.Atoi(vars["id"])
@@ -29,6 +31,7 @@ func (ex *Expenses) GetExpense(rw http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// Writes to the ResponseWriter the Expenses that have a vendor that matches the one provided in the GET REQ Path
 func (ex *Expenses) GetExpensesByVendor(rw http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	vendor, exists := vars["vendor"]

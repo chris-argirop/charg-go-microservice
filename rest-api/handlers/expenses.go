@@ -12,6 +12,7 @@ type Expenses struct {
 	db *db.Database
 }
 
+// Expenses Constructor
 func NewExpense(l *log.Logger, db *db.Database) *Expenses {
 	return &Expenses{l, db}
 }

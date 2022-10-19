@@ -8,6 +8,7 @@ import (
 	"github.com/chris-argirop/charg-go-microsrvice/rest-api/data"
 )
 
+// MiddleWare function to validate provided JSON in a request
 func (ex *Expenses) MiddlewarevalidateExpense(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(rw http.ResponseWriter, r *http.Request) {
 		exp := data.Expense{}

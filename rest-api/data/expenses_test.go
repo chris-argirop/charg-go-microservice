@@ -2,6 +2,7 @@ package data
 
 import "testing"
 
+// Unit Test to verify validation when creatin a new Expense
 func TestChecksValidation(t *testing.T) {
 	e := &Expense{
 		Vendor: "Super Market",

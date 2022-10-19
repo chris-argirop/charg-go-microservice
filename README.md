@@ -15,7 +15,8 @@ docker compose up --build
 ```
 
 Then run your http requests
-Refer to [rest-api/client.http](rest-api/client.http)  file for all the functionality examples
+Refer to [rest-api/client.http](rest-api/client.http)  file for all the functionality examples. 
+Keep in mind, that client.http file is used with VS Code extension REST Client
 
 __NOTE__ : Feel free to choose your own MySQL Parameters in [docker-compose.yaml](docker-compose.yaml) file.
 ### Expense Manager Functionality

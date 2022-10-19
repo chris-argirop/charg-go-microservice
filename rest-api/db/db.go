@@ -24,6 +24,7 @@ type Row struct {
 	Date        string  `json:"createdOn"`
 }
 
+// Database Constructor
 func NewDatabase(driverName, dataSourceName string) (*Database, error) {
 	// Wait for DB to spin up
 	time.Sleep(30 * time.Second)
@@ -39,10 +40,12 @@ func NewDatabase(driverName, dataSourceName string) (*Database, error) {
 	return &Database{db: db}, err
 }
 
+// Row Constructor
 func NewRow(id int, vendor string, descr string, value float32, date string) *Row {
 	return &Row{id, vendor, descr, value, date}
 }
 
+// Close connection to the DB
 func (mydb Database) CloseConnection() {
 	err := mydb.db.Close()
 	if err != nil {
@@ -50,11 +53,13 @@ func (mydb Database) CloseConnection() {
 	}
 }
 
+// JSON Encoder Function from an io.Writer
 func (r Row) ToJSON(w io.Writer) error {
 	e := json.NewEncoder(w)
 	return e.Encode(r)
 }
 
+// Write on a io.Writer all the Expense entries from the DB
 func (mydb Database) GetExpenses(w io.Writer) error {
 	res, err := mydb.db.Query("SELECT * FROM expenses")
 	if err != nil {
@@ -86,6 +91,7 @@ func (mydb Database) GetExpenses(w io.Writer) error {
 	return nil
 }
 
+// Write on a io.Writer the Expense entry from the DB, by id
 func (mydb Database) GetExpense(w io.Writer, id int) error {
 	res, err := mydb.db.Query(fmt.Sprintf("SELECT * FROM expenses WHERE ID = %d", id))
 	if err != nil {
@@ -116,6 +122,7 @@ func (mydb Database) GetExpense(w io.Writer, id int) error {
 	return nil
 }
 
+// Write on a io.Writer all the Expense entries from the DB, that match a specific vendor
 func (mydb Database) GetExpensesByVendor(w io.Writer, vendor string) error {
 	res, err := mydb.db.Query(fmt.Sprintf("SELECT * FROM expenses WHERE vendor = \"%s\"", vendor))
 	if err != nil {
@@ -146,6 +153,9 @@ func (mydb Database) GetExpensesByVendor(w io.Writer, vendor string) error {
 	return nil
 }
 
+// Add a new expense entry in the DB, information needed to be supplied as paramaeters
+// vendor: a string describing the vendor that the expense was made to
+// sum: a float32 to specify the ammount of the expense to the above vendor
 func (mydb Database) AddExpense(vendor string, sum float32) error {
 	id := mydb.getnextID()
 	queryString, args, err := sq.Insert("expenses").Columns("id", "vendor", "descr", "val", "createdOn").
@@ -163,6 +173,7 @@ func (mydb Database) AddExpense(vendor string, sum float32) error {
 	return nil
 }
 
+// Update a DB entry that matches a specific id, with the values provided in the parameters
 func (mydb Database) UpdateExpense(id int, vendor string, description string, sum float32) error {
 
 	queryString, args, err := sq.Update("expenses").
@@ -186,6 +197,7 @@ func (mydb Database) UpdateExpense(id int, vendor string, description string, su
 
 }
 
+// Delete a specific DB entry that matches the supplied id value
 func (mydb Database) DeleteExpense(id int) error {
 	queryString, args, err := sq.Delete("expenses").Where("id = ?", id).ToSql()
 
@@ -200,6 +212,7 @@ func (mydb Database) DeleteExpense(id int) error {
 	return nil
 }
 
+// Clear all entries from the DB table
 func (mydb Database) ClearTable() error {
 	queryString, args, err := sq.Delete("expenses").ToSql()
 
@@ -215,6 +228,7 @@ func (mydb Database) ClearTable() error {
 	return nil
 }
 
+// Function to retrieve the ID which a new db entry should have
 func (mydb *Database) getnextID() int {
 	var count int
 	err := mydb.db.QueryRow("SELECT COUNT(*) FROM expenses").Scan(&count)

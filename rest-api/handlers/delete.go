@@ -7,6 +7,7 @@ import (
 	"github.com/gorilla/mux"
 )
 
+// Deletes an Expense based on the id provided in the GET Req path
 func (ex *Expenses) DeleteExpense(rw http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id, err := strconv.Atoi(vars["id"])
@@ -22,6 +23,7 @@ func (ex *Expenses) DeleteExpense(rw http.ResponseWriter, r *http.Request) {
 
 }
 
+// Completely removes any entries to the expenses table
 func (ex *Expenses) ClearTable(rw http.ResponseWriter, r *http.Request) {
 	ex.l.Println("Handle PUT Clear Table ")
 	err := ex.db.ClearTable()

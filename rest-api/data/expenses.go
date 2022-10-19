@@ -18,11 +18,13 @@ type Expense struct {
 	Month       string  `json:-`
 }
 
+// Function to Decode JSON from an io.Reader
 func (ex *Expense) FromJSON(w io.Reader) error {
 	e := json.NewDecoder(w)
 	return e.Decode(ex)
 }
 
+// Function to validate the values of an Expense
 func (ex *Expense) Validate() error {
 	validate := validator.New()
 	return validate.Struct(ex)
