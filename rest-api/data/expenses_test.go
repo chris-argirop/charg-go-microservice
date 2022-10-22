@@ -1,6 +1,10 @@
 package data
 
-import "testing"
+import (
+	"bytes"
+	"io"
+	"testing"
+)
 
 // Unit Test to verify validation when creatin a new Expense
 func TestChecksValidation(t *testing.T) {
@@ -14,4 +18,15 @@ func TestChecksValidation(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+}
+
+func TestFromJSON(t *testing.T) {
+	e := &Expense{}
+	var w io.Reader = bytes.NewBufferString(`{"vendor": "PAF", "value": 12.3}`)
+	t.Log(w)
+	err := e.FromJSON(w)
+	if err != nil {
+		t.Fatalf("Decoding JSON FAILED")
+	}
+
 }
