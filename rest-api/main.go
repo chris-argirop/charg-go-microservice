@@ -54,16 +54,14 @@ func main() {
 	eh := handlers.NewExpense(l, db)
 
 	sm := mux.NewRouter()
+
+	sm.Use(prometheusMiddleware)
+	sm.Path("/metrics").Handler(promhttp.Handler())
+
 	getRouter := sm.Methods(http.MethodGet).Subrouter()
 	getRouter.HandleFunc("/api/get", eh.GetExpenses)
 	getRouter.HandleFunc("/api/get/{id:[0-9]+}", eh.GetExpense)
-	getRouter.HandleFunc("/api/delete/{id:[0-9]+}", eh.DeleteExpense)
-	getRouter.HandleFunc("/api/clearall", eh.ClearTable)
 	getRouter.HandleFunc("/api/get/{vendor:(?s).*}", eh.GetExpensesByVendor)
-
-	sm.Use(prometheusMiddleware)
-
-	sm.Path("/metrics").Handler(promhttp.Handler())
 
 	putRouter := sm.Methods(http.MethodPut).Subrouter()
 	putRouter.HandleFunc("/api/update/{id:[0-9]+}", eh.UpdateExpenses)
@@ -72,6 +70,10 @@ func main() {
 	postRouter := sm.Methods(http.MethodPost).Subrouter()
 	postRouter.HandleFunc("/api/add", eh.AddExpenses)
 	postRouter.Use(eh.MiddlewarevalidateExpense)
+
+	deleteRouter := sm.Methods(http.MethodDelete).Subrouter()
+	deleteRouter.HandleFunc("/api/delete/{id:[0-9]+}", eh.DeleteExpense)
+	deleteRouter.HandleFunc("/api/clearall", eh.ClearTable)
 
 	s := &http.Server{
 		Addr:         ":9100",

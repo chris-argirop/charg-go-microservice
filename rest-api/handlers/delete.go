@@ -15,7 +15,7 @@ func (ex *Expenses) DeleteExpense(rw http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		http.Error(rw, "Unable to conver id", http.StatusBadRequest)
 	}
-	ex.l.Println("Handle PUT Delete Specific Expense ", id)
+	ex.l.Println("Handle DELETE Specific Expense ", id)
 	err = ex.db.DeleteExpense(id)
 	if err != nil {
 		http.Error(rw, "Could not remove database entry", http.StatusInternalServerError)
@@ -25,7 +25,7 @@ func (ex *Expenses) DeleteExpense(rw http.ResponseWriter, r *http.Request) {
 
 // Completely removes any entries to the expenses table
 func (ex *Expenses) ClearTable(rw http.ResponseWriter, r *http.Request) {
-	ex.l.Println("Handle PUT Clear Table ")
+	ex.l.Println("Handle DELETE Clear Table ")
 	err := ex.db.ClearTable()
 
 	if err != nil {
