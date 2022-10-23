@@ -26,8 +26,6 @@ type Row struct {
 
 // Database Constructor
 func NewDatabase(driverName, dataSourceName string) (*Database, error) {
-	// Wait for DB to spin up
-	time.Sleep(30 * time.Second)
 	db, err := sql.Open(driverName, dataSourceName)
 	if err != nil {
 		log.Fatalf("DB Connection Failure: %v", err)

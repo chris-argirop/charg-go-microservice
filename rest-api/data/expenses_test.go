@@ -23,7 +23,6 @@ func TestChecksValidation(t *testing.T) {
 func TestFromJSON(t *testing.T) {
 	e := &Expense{}
 	var w io.Reader = bytes.NewBufferString(`{"vendor": "PAF", "value": 12.3}`)
-	t.Log(w)
 	err := e.FromJSON(w)
 	if err != nil {
 		t.Fatalf("Decoding JSON FAILED")

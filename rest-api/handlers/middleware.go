@@ -12,7 +12,6 @@ import (
 func (ex *Expenses) MiddlewarevalidateExpense(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(rw http.ResponseWriter, r *http.Request) {
 		exp := data.Expense{}
-
 		err := exp.FromJSON(r.Body)
 		if err != nil {
 			ex.l.Println("[ERROR] deserializing expense", err)
@@ -32,8 +31,7 @@ func (ex *Expenses) MiddlewarevalidateExpense(next http.Handler) http.Handler {
 		}
 
 		ctx := context.WithValue(r.Context(), KeyExpense{}, exp)
-		r = r.WithContext(ctx)
-
-		next.ServeHTTP(rw, r)
+		req := r.WithContext(ctx)
+		next.ServeHTTP(rw, req)
 	})
 }
