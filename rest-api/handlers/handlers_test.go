@@ -15,8 +15,8 @@ import (
 var jsonData = []byte(`{"vendor": "TestPAF","value": 12.3}`)
 
 func Router() *mux.Router {
-	sm := mux.NewRouter()
-	return sm
+	router := mux.NewRouter()
+	return router
 }
 
 func InitDB() *Expenses {
@@ -32,6 +32,14 @@ func InitDB() *Expenses {
 	return NewExpense(l, db)
 }
 
+var testEh *Expenses
+
+func TestMain(m *testing.M) {
+	testEh = InitDB()
+	defer testEh.db.CloseConnection()
+	m.Run()
+}
+
 func TestAddExpenses(t *testing.T) {
 
 	req, err := http.NewRequest("POST", "/api/add", bytes.NewBuffer(jsonData))
@@ -39,12 +47,9 @@ func TestAddExpenses(t *testing.T) {
 		t.Errorf("Error creating a new HTTP Post request")
 	}
 
-	var eh *Expenses = InitDB()
-	defer eh.db.CloseConnection()
-
 	sm := Router()
-	sm.HandleFunc("/api/add", eh.AddExpenses).Methods(http.MethodPost)
-	sm.Use(eh.MiddlewarevalidateExpense)
+	sm.HandleFunc("/api/add", testEh.AddExpenses).Methods(http.MethodPost)
+	sm.Use(testEh.MiddlewarevalidateExpense)
 	rec := httptest.NewRecorder()
 
 	sm.ServeHTTP(rec, req)
@@ -58,10 +63,7 @@ func TestGetExpenses(t *testing.T) {
 	request, _ := http.NewRequest("GET", "/api/get", nil)
 	rec := httptest.NewRecorder()
 
-	var eh *Expenses = InitDB()
-	defer eh.db.CloseConnection()
-
-	handler := http.HandlerFunc(eh.GetExpenses)
+	handler := http.HandlerFunc(testEh.GetExpenses)
 
 	handler.ServeHTTP(rec, request)
 	if status := rec.Code; status != http.StatusOK {
@@ -77,12 +79,9 @@ func TestUpdateExpenses(t *testing.T) {
 	}
 	rec := httptest.NewRecorder()
 
-	var eh *Expenses = InitDB()
-	defer eh.db.CloseConnection()
-
 	sm := Router()
-	sm.HandleFunc("/api/update/{id:[0-9]+}", eh.UpdateExpenses).Methods(http.MethodPut)
-	sm.Use(eh.MiddlewarevalidateExpense)
+	sm.HandleFunc("/api/update/{id:[0-9]+}", testEh.UpdateExpenses).Methods(http.MethodPut)
+	sm.Use(testEh.MiddlewarevalidateExpense)
 	sm.ServeHTTP(rec, request)
 
 	if status := rec.Code; status != http.StatusOK {
