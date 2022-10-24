@@ -2,46 +2,15 @@ package handlers
 
 import (
 	"bytes"
-	"log"
 	"net/http"
 	"net/http/httptest"
-	"os"
 	"testing"
-
-	"github.com/chris-argirop/charg-go-microsrvice/rest-api/db"
-	"github.com/gorilla/mux"
 )
 
 var jsonData = []byte(`{"vendor": "TestPAF","value": 12.3}`)
 
-func Router() *mux.Router {
-	router := mux.NewRouter()
-	return router
-}
-
-func InitDB() *Expenses {
-	l := log.New(os.Stdout, "charg-api", log.LstdFlags)
-
-	dbaseDriver := os.Getenv("DB_DRIVER")
-	dsourceName := os.Getenv("DS_NAME")
-
-	db, err := db.NewDatabase(dbaseDriver, dsourceName)
-	if err != nil {
-		l.Fatal(err)
-	}
-	return NewExpense(l, db)
-}
-
-var testEh *Expenses
-
-func TestMain(m *testing.M) {
-	testEh = InitDB()
-	defer testEh.db.CloseConnection()
-	m.Run()
-}
-
 func TestAddExpenses(t *testing.T) {
-
+	testEh.l.Println("Testing logger in test")
 	req, err := http.NewRequest("POST", "/api/add", bytes.NewBuffer(jsonData))
 	if err != nil {
 		t.Errorf("Error creating a new HTTP Post request")

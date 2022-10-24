@@ -12,7 +12,7 @@ type Expense struct {
 	Vendor      string  `json:"vendor" validate:"required"`
 	Description string  `json:"description"`
 	Value       float32 `json:"value" validate:"required"`
-	CreatedOn   string  `json:-`
+	CreatedOn   string  `json:"Date"`
 	UpdatedOn   string  `json:-`
 	DeletedOn   string  `json:-`
 	Month       string  `json:-`
