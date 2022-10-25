@@ -155,9 +155,14 @@ func (mydb Database) GetExpensesByVendor(w io.Writer, vendor string) error {
 // vendor: a string describing the vendor that the expense was made to
 // sum: a float32 to specify the ammount of the expense to the above vendor
 func (mydb Database) AddExpense(vendor string, sum float32) error {
-	id := mydb.getnextID()
-	queryString, args, err := sq.Insert("expenses").Columns("id", "vendor", "descr", "val", "createdOn").
-		Values(id, vendor, "N/A", sum, time.Now()).ToSql()
+	id, err := mydb.getnextID()
+	if err != nil {
+		return err
+	}
+	queryString, args, err := sq.Insert("expenses").
+		Columns("id", "vendor", "descr", "val", "createdOn").
+		Values(id, vendor, "N/A", sum, time.Now()).
+		ToSql()
 
 	if err != nil {
 		return err
@@ -227,11 +232,11 @@ func (mydb Database) ClearTable() error {
 }
 
 // Function to retrieve the ID which a new db entry should have
-func (mydb *Database) getnextID() int {
+func (mydb *Database) getnextID() (int, error) {
 	var count int
 	err := mydb.db.QueryRow("SELECT COUNT(*) FROM expenses").Scan(&count)
 	if err != nil {
-		log.Fatalf("Couldn't retrieve number of entries: %v", err)
+		return -1, err
 	}
-	return count
+	return count, nil
 }

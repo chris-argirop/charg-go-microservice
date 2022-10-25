@@ -7,7 +7,7 @@ GET http://localhost:9100/api/get/0 HTTP/1.1
 
 ### 
 
-GET http://localhost:9100/api/get/OYSHO HTTP/1.1
+GET http://localhost:9100/api/get/testVendor HTTP/1.1
 
 
 ###
