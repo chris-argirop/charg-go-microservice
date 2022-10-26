@@ -2,14 +2,35 @@ package handlers
 
 import (
 	"bytes"
+	"log"
 	"net/http"
 	"net/http/httptest"
+	"os"
 	"testing"
 
+	"github.com/chris-argirop/charg-go-microsrvice/rest-api/db"
 	"github.com/stretchr/testify/require"
+	"gopkg.in/go-playground/assert.v1"
 )
 
 var jsonData = []byte(`{"vendor": "TestPAF","value": 12.3}`)
+
+func TestNewExpense(t *testing.T) {
+
+	l := log.New(os.Stdout, "charg-api", log.LstdFlags)
+
+	dbaseDriver := os.Getenv("DB_DRIVER")
+	dsourceName := os.Getenv("DS_NAME")
+
+	db, err := db.NewDatabase(dbaseDriver, dsourceName)
+	require.NoError(t, err)
+
+	testExp := NewExpense(l, db)
+	assert.Equal(t, testExp.l, l)
+	assert.Equal(t, testExp.db, db)
+	defer testExp.db.CloseConnection()
+
+}
 
 func TestAddExpenses(t *testing.T) {
 	req, err := http.NewRequest("POST", "/api/add", bytes.NewBuffer(jsonData))
@@ -79,6 +100,16 @@ func TestUpdateExpenses(t *testing.T) {
 
 	if status := rec.Code; status != http.StatusOK {
 		t.Errorf("handler returned wrong status code: got %v, expected %v", status, http.StatusOK)
+	}
+
+	// Check invalid ID
+	request, err = http.NewRequest("PUT", "/api/update/invalidID", bytes.NewBuffer(jsonData))
+	require.NoError(t, err)
+	rec = httptest.NewRecorder()
+	sm.ServeHTTP(rec, request)
+
+	if status := rec.Code; status != http.StatusNotFound {
+		t.Errorf("handler returned wrong status code: got %v, expected %v", status, http.StatusNotFound)
 	}
 
 }

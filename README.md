@@ -51,9 +51,9 @@ From inside the application container:
 ```sh
 /app/rest-api # go test ./... -cover
 ?       github.com/chris-argirop/charg-go-microsrvice/rest-api  [no test files]
-ok      github.com/chris-argirop/charg-go-microsrvice/rest-api/data     0.006s  coverage: 100.0% of statements
-ok      github.com/chris-argirop/charg-go-microsrvice/rest-api/db       0.077s  coverage: 79.3% of statements
-ok      github.com/chris-argirop/charg-go-microsrvice/rest-api/handlers 0.030s  coverage: 69.7% of statements
+ok      github.com/chris-argirop/charg-go-microsrvice/rest-api/data     0.007s  coverage: 100.0% of statements
+ok      github.com/chris-argirop/charg-go-microsrvice/rest-api/db       0.085s  coverage: 79.3% of statements
+ok      github.com/chris-argirop/charg-go-microsrvice/rest-api/handlers 0.037s  coverage: 72.4% of statements
 ```
 
 
