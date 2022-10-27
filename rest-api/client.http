@@ -21,12 +21,12 @@ content-type: application/json
 
 ###
 
-PUT http://localhost:9100/api/update/2 HTTP/1.1
+PUT http://localhost:9100/api/update/ HTTP/1.1
 content-type: application/json
 
 {
     "vendor": "GroceryStore",
-    "description": "Super Market",
+    "description": "Weekly Groceries",
     "value": 75
 }
 
